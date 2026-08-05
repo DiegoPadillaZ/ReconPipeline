@@ -87,8 +87,8 @@ go run ./cmd/threatlens scan -c config.example.yaml -f html -o ./reports https:/
 ### 3 — Custom report name
 
 ```sh
-go run ./cmd/threatlens scan -c config.example.yaml -f html -n eltiempo-audit -o ./reports https://www.eltiempo.com
-# Output: ./reports/eltiempo-audit.html
+go run ./cmd/threatlens scan -c config.example.yaml -f html -n tesla-audit -o ./reports https://www.tesla.com
+# Output: ./reports/tesla-audit.html
 ```
 
 ### 4 — All five output formats
@@ -105,7 +105,7 @@ go run ./cmd/threatlens scan -c config.example.yaml -f sarif    -n scan-result -
 
 ```sh
 go run ./cmd/threatlens scan -c config.example.yaml -f html -n multi-scan \
-  https://example.com https://www.eltiempo.com https://google.com
+  https://example.com https://www.tesla.com https://google.com
 ```
 
 ### 6 — Targets defined in the config file
@@ -114,7 +114,7 @@ Edit `config.yaml`:
 ```yaml
 targets:
   - https://example.com
-  - https://www.eltiempo.com
+  - https://www.tesla.com
 ```
 Then run:
 ```sh
