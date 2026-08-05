@@ -66,6 +66,7 @@ func runScan(cmd *cobra.Command, args []string) error {
 		logger.Warn("no successful scans")
 		return nil
 	}
+
 	return writeReport(cfg, buildReport(results))
 }
 
@@ -217,14 +218,18 @@ func openStore(cfg *config.Config) database.Store {
 }
 
 func writeReport(cfg *config.Config, rep *models.Report) error {
-	if err := os.MkdirAll(cfg.OutputDir, 0750); err != nil {
-		return fmt.Errorf("create output dir: %w", err)
-	}
 	name := scanName
 	if name == "" {
-		name = "report"
+		name = "scan-" + time.Now().Format("20060102-150405")
 	}
-	outPath := filepath.Join(cfg.OutputDir, name+"."+scanFormat)
+
+	// Dedicated folder for this scan's artifacts.
+	reportDir := filepath.Join(cfg.OutputDir, name)
+	if err := os.MkdirAll(reportDir, 0750); err != nil {
+		return fmt.Errorf("create report dir: %w", err)
+	}
+
+	outPath := filepath.Join(reportDir, "report."+scanFormat)
 	f, err := os.OpenFile(outPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
 		return fmt.Errorf("open report file: %w", err)
@@ -236,6 +241,9 @@ func writeReport(cfg *config.Config, rep *models.Report) error {
 	if err := gen.Generate(context.Background(), rep, &buf); err != nil {
 		return err
 	}
-	_, err = f.Write(buf.Bytes())
-	return err
+	if _, err = f.Write(buf.Bytes()); err != nil {
+		return err
+	}
+	logger.Info("report saved", zap.String("path", outPath))
+	return nil
 }

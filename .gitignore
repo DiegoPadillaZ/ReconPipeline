@@ -14,6 +14,7 @@ reports/
 *.sqlite
 *.sqlite3
 *.html
+*.png
 
 # ----- Config with real values -----
 config.yaml
