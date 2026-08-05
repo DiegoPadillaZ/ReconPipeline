@@ -1,0 +1,37 @@
+# ThreatLens configuration example
+# Copy to config.yaml and adjust as needed.
+
+# Number of concurrent scans
+concurrency: 5
+
+# HTTP request timeout (seconds)
+timeout_seconds: 30
+
+# Number of retries on transient errors
+retries: 3
+
+# Optional HTTP proxy (leave empty to use system proxy or none)
+proxy: ""
+
+# User-Agent string sent with every request
+user_agent: "ThreatLens/1.0"
+
+# Path to the offline knowledge database directory
+knowledge_db_path: "./knowledge"
+
+# Directory where reports and the SQLite database are written
+output_dir: "./reports"
+
+# Log verbosity: debug | info | warn | error
+verbosity: "info"
+
+# Optional pre-defined target list (can also be passed as CLI arguments)
+# targets:
+#   - https://example.com
+#   - https://other.example.org
+
+# Optional AI enrichment (provider API key must be in environment variable)
+# ai:
+#   provider: "openai"    # openai | anthropic | ollama | gemini
+#   model: "gpt-4o-mini"
+#   base_url: ""          # leave empty for default; set for Ollama/proxy
