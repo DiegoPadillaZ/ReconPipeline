@@ -67,21 +67,77 @@ docker run --rm threatlens scan https://example.com
 
 ## Quick Start
 
+> All examples use `go run` (no build step required). If you built the binary, replace
+> `go run ./cmd/threatlens` with `./threatlens` (Linux/macOS) or `.\threatlens.exe` (Windows).
+
+### 1 — First scan (JSON, default)
+
 ```sh
-# Scan a single URL (JSON output)
-threatlens scan https://example.com
-
-# HTML report
-threatlens scan -f html -o ./reports https://example.com
-
-# SARIF (for GitHub Code Scanning / IDE integration)
-threatlens scan -f sarif -o ./reports https://example.com
-
-# Multiple targets with a config file
-threatlens scan -c config.yaml
+go run ./cmd/threatlens scan -c config.example.yaml https://example.com
+# Output: ./reports/report.json
 ```
 
-Reports are written to `./reports/` (or the directory specified by `-o`).
+### 2 — HTML report you can open in a browser
+
+```sh
+go run ./cmd/threatlens scan -c config.example.yaml -f html -o ./reports https://example.com
+# Output: ./reports/report.html
+```
+
+### 3 — Custom report name
+
+```sh
+go run ./cmd/threatlens scan -c config.example.yaml -f html -n eltiempo-audit -o ./reports https://www.eltiempo.com
+# Output: ./reports/eltiempo-audit.html
+```
+
+### 4 — All five output formats
+
+```sh
+go run ./cmd/threatlens scan -c config.example.yaml -f json     -n scan-result -o ./reports https://example.com
+go run ./cmd/threatlens scan -c config.example.yaml -f markdown -n scan-result -o ./reports https://example.com
+go run ./cmd/threatlens scan -c config.example.yaml -f html     -n scan-result -o ./reports https://example.com
+go run ./cmd/threatlens scan -c config.example.yaml -f csv      -n scan-result -o ./reports https://example.com
+go run ./cmd/threatlens scan -c config.example.yaml -f sarif    -n scan-result -o ./reports https://example.com
+```
+
+### 5 — Scan multiple targets at once
+
+```sh
+go run ./cmd/threatlens scan -c config.example.yaml -f html -n multi-scan \
+  https://example.com https://www.eltiempo.com https://google.com
+```
+
+### 6 — Targets defined in the config file
+
+Edit `config.yaml`:
+```yaml
+targets:
+  - https://example.com
+  - https://www.eltiempo.com
+```
+Then run:
+```sh
+go run ./cmd/threatlens scan -c config.yaml -f html -n my-report -o ./reports
+```
+
+### 7 — Debug mode (see every pipeline step)
+
+```sh
+go run ./cmd/threatlens scan -c config.example.yaml -v debug https://example.com
+# Logs: DNS/TCP/TLS timing, parser, fingerprint, correlation, risk score steps
+```
+
+### 8 — SARIF for GitHub Code Scanning / VS Code
+
+```sh
+go run ./cmd/threatlens scan -c config.example.yaml -f sarif -n results -o ./reports https://example.com
+# Output: ./reports/results.sarif
+# Upload to GitHub: Settings → Security → Code scanning → Upload SARIF
+```
+
+All reports are saved in the directory set by `-o` (default: `./reports/`).
+The SQLite scan history is stored alongside them as `threatlens.db`.
 
 ---
 
@@ -117,10 +173,24 @@ Full reference: [config.example.yaml](config.example.yaml)
 threatlens scan [url...] [flags]
 
 Flags:
-  -f, --format string    report format: json|markdown|html|csv|sarif (default "json")
-  -o, --output string    output directory (default "./reports")
-  -c, --config string    config file (default: threatlens.yaml)
-  -v, --verbosity string log level: debug | info | warn | error
+  -f, --format string      report format: json|markdown|html|csv|sarif (default "json")
+  -n, --name string        output filename without extension (default "report")
+  -o, --output string      output directory for reports (default "./reports")
+  -c, --config string      config file (default: threatlens.yaml)
+  -v, --verbosity string   log level: debug | info | warn | error (default "info")
+
+Examples:
+  # Minimal — JSON to ./reports/report.json
+  threatlens scan -c config.yaml https://example.com
+
+  # Named HTML report
+  threatlens scan -c config.yaml -f html -n my-report -o ./reports https://example.com
+
+  # Multiple targets, CSV output
+  threatlens scan -c config.yaml -f csv -n batch https://a.com https://b.com
+
+  # Full debug output
+  threatlens scan -c config.yaml -v debug https://example.com
 ```
 
 ---

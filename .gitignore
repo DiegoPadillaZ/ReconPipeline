@@ -13,6 +13,7 @@ reports/
 *.db
 *.sqlite
 *.sqlite3
+*.html
 
 # ----- Config with real values -----
 config.yaml

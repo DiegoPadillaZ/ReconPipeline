@@ -25,6 +25,7 @@ import (
 )
 
 var scanFormat string
+var scanName string
 
 var scanCmd = &cobra.Command{
 	Use:   "scan [url...]",
@@ -36,6 +37,8 @@ var scanCmd = &cobra.Command{
 func init() {
 	scanCmd.Flags().StringVarP(&scanFormat, "format", "f", "json",
 		"report format: json|markdown|html|csv|sarif")
+	scanCmd.Flags().StringVarP(&scanName, "name", "n", "",
+		"output filename (without extension); defaults to \"report\"")
 	rootCmd.AddCommand(scanCmd)
 }
 
@@ -217,7 +220,11 @@ func writeReport(cfg *config.Config, rep *models.Report) error {
 	if err := os.MkdirAll(cfg.OutputDir, 0750); err != nil {
 		return fmt.Errorf("create output dir: %w", err)
 	}
-	outPath := filepath.Join(cfg.OutputDir, "report."+scanFormat)
+	name := scanName
+	if name == "" {
+		name = "report"
+	}
+	outPath := filepath.Join(cfg.OutputDir, name+"."+scanFormat)
 	f, err := os.OpenFile(outPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
 		return fmt.Errorf("open report file: %w", err)
