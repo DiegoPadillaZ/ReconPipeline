@@ -109,5 +109,8 @@ a{color:#58a6ff}
   {{end}}
 </div>
 {{end}}
+<footer style="margin-top:3rem;text-align:center;color:#8b949e;font-size:.8rem">
+  Made with ❤️ by <a href="https://github.com/DiegoPadillaZ" target="_blank">DiegoPadillaZ</a>
+</footer>
 </body>
 </html>`))
